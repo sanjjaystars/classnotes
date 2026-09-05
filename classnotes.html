@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classnotes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+  :root{
+    --paper: #FAFAF7;
+    --paper-dim: #F1EFE7;
+    --ink: #1F2A24;
+    --ink-soft: #4B564F;
+    --pencil: #8A8578;
+    --moss: #3F6B4F;
+    --moss-dim: #E7EEE8;
+    --rust: #B8492F;
+    --rust-dim: #F5E6E1;
+    --rule: #D9D5C7;
+    --radius: 3px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none!important; transition:none!important; }
+  }
+
+  .page{
+    max-width:760px;
+    margin:0 auto;
+    padding:40px 24px 120px;
+  }
+
+  header.masthead{
+    border-bottom:2px solid var(--ink);
+    padding-bottom:18px;
+    margin-bottom:28px;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+
+  h1{
+    font-family:'Libre Caslon Text', serif;
+    font-weight:700;
+    font-size:34px;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+
+  .masthead .sub{
+    font-size:13px;
+    color:var(--pencil);
+    font-style:italic;
+    font-family:'Libre Caslon Text', serif;
+  }
+
+  .whoami{
+    font-size:13px;
+    color:var(--ink-soft);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .whoami button{
+    background:none;
+    border:none;
+    color:var(--moss);
+    text-decoration:underline;
+    cursor:pointer;
+    font:inherit;
+    padding:0;
+  }
+  .whoami button:focus-visible{ outline:2px solid var(--moss); outline-offset:2px; }
+
+  .toolbar{
+    display:flex;
+    gap:12px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+
+  input[type=text], input[type=search], textarea, select{
+    font-family:inherit;
+    font-size:14px;
+    color:var(--ink);
+    background:var(--paper);
+    border:1px solid var(--rule);
+    border-radius:var(--radius);
+    padding:9px 11px;
+  }
+  input[type=text]:focus, input[type=search]:focus, textarea:focus, select:focus{
+    outline:2px solid var(--moss);
+    outline-offset:1px;
+    border-color:var(--moss);
+  }
+
+  .search{
+    flex:1;
+    min-width:160px;
+  }
+
+  .add-btn{
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:var(--radius);
+    padding:9px 16px;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+  }
+  .add-btn:hover{ background:var(--moss); }
+  .add-btn:disabled{ background:var(--pencil); cursor:not-allowed; }
+  .add-btn:focus-visible{ outline:2px solid var(--rust); outline-offset:2px; }
+
+  .tabs{
+    display:flex;
+    gap:2px;
+    margin-bottom:26px;
+    flex-wrap:wrap;
+    border-bottom:1px solid var(--rule);
+  }
+  .tab{
+    background:none;
+    border:none;
+    border-bottom:2px solid transparent;
+    padding:8px 12px 10px;
+    font-family:inherit;
+    font-size:13px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    margin-bottom:-1px;
+  }
+  .tab.active{
+    color:var(--ink);
+    border-bottom-color:var(--moss);
+    font-weight:600;
+  }
+  .tab:focus-visible{ outline:2px solid var(--moss); outline-offset:-2px; }
+
+  .composer{
+    border:1px solid var(--rule);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:28px;
+    background:var(--paper-dim);
+    display:none;
+  }
+  .composer.open{ display:block; }
+  .composer .row{
+    display:flex;
+    gap:10px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+  }
+  .composer .row input[type=text]{ flex:1; min-width:140px; }
+  .composer textarea{
+    width:100%;
+    min-height:110px;
+    resize:vertical;
+    margin-bottom:12px;
+  }
+
+  .file-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .file-picker{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border:1px dashed var(--rule);
+    border-radius:var(--radius);
+    padding:8px 12px;
+    font-size:13px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    background:var(--paper);
+  }
+  .file-picker:hover{ border-color:var(--moss); color:var(--moss); }
+  .file-picker input[type=file]{ display:none; }
+  .file-name{
+    font-size:12.5px;
+    color:var(--moss);
+  }
+  .file-clear{
+    background:none;
+    border:none;
+    color:var(--pencil);
+    font:inherit;
+    font-size:12px;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+  .file-hint{
+    font-size:11.5px;
+    color:var(--pencil);
+    width:100%;
+  }
+
+  .composer .actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+  }
+  .composer .cancel{
+    background:none;
+    border:none;
+    color:var(--ink-soft);
+    font:inherit;
+    font-size:14px;
+    cursor:pointer;
+    padding:9px 8px;
+  }
+
+  .empty{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--pencil);
+  }
+  .empty .big{
+    font-family:'Libre Caslon Text', serif;
+    font-style:italic;
+    font-size:20px;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+
+  .notes{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+
+  .note{
+    border:1px solid var(--rule);
+    border-left:4px solid var(--moss);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    background:var(--paper);
+    position:relative;
+  }
+  .note.mine{ border-left-color:var(--rust); }
+
+  .note-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:4px;
+    flex-wrap:wrap;
+  }
+
+  .note-title{
+    font-family:'Libre Caslon Text', serif;
+    font-weight:700;
+    font-size:19px;
+    margin:0;
+  }
+
+  .note-subject{
+    font-size:11px;
+    color:var(--moss);
+    background:var(--moss-dim);
+    padding:3px 8px;
+    border-radius:2px;
+    white-space:nowrap;
+  }
+
+  .note-meta{
+    font-size:12px;
+    color:var(--pencil);
+    margin-bottom:10px;
+  }
+
+  .note-body{
+    font-size:14.5px;
+    color:var(--ink-soft);
+    white-space:pre-wrap;
+    max-height:96px;
+    overflow:hidden;
+    position:relative;
+  }
+  .note-body.expanded{ max-height:none; }
+  .note-body.clamped::after{
+    content:"";
+    position:absolute;
+    bottom:0; left:0; right:0;
+    height:36px;
+    background:linear-gradient(to bottom, transparent, var(--paper));
+  }
+  .note-body:empty{ display:none; }
+
+  .pdf-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border:1px solid var(--rule);
+    border-radius:var(--radius);
+    padding:7px 11px;
+    font-size:13px;
+    color:var(--ink);
+    background:var(--paper-dim);
+    margin-top:4px;
+    margin-bottom:10px;
+  }
+  .pdf-chip .ext{
+    font-family:'Libre Caslon Text', serif;
+    font-weight:700;
+    font-size:11px;
+    color:var(--rust);
+    border:1px solid var(--rust);
+    border-radius:2px;
+    padding:1px 5px;
+  }
+  .pdf-chip button{
+    background:none;
+    border:none;
+    color:var(--moss);
+    font:inherit;
+    font-size:13px;
+    text-decoration:underline;
+    cursor:pointer;
+    padding:0;
+    margin-left:auto;
+  }
+  .pdf-chip button:disabled{ color:var(--pencil); cursor:wait; text-decoration:none; }
+
+  .note-foot{
+    margin-top:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .expand-btn{
+    background:none;
+    border:none;
+    color:var(--moss);
+    font:inherit;
+    font-size:13px;
+    cursor:pointer;
+    padding:0;
+    text-decoration:underline;
+  }
+
+  .delete-btn{
+    background:none;
+    border:none;
+    color:var(--pencil);
+    font:inherit;
+    font-size:12px;
+    cursor:pointer;
+    padding:0;
+  }
+  .delete-btn:hover{ color:var(--rust); }
+
+  .status{
+    font-size:12px;
+    color:var(--pencil);
+    margin-bottom:16px;
+    min-height:16px;
+  }
+  .status.error{ color:var(--rust); }
+
+  .name-gate{
+    position:fixed;
+    inset:0;
+    background:rgba(31,42,36,0.55);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:10;
+  }
+  .name-card{
+    background:var(--paper);
+    border-radius:var(--radius);
+    padding:28px 26px;
+    max-width:340px;
+    width:100%;
+  }
+  .name-card h2{
+    font-family:'Libre Caslon Text', serif;
+    font-size:22px;
+    margin:0 0 6px;
+  }
+  .name-card p{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:0 0 16px;
+  }
+  .name-card input{ width:100%; margin-bottom:14px; }
+  .name-card button{
+    width:100%;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:var(--radius);
+    padding:10px;
+    font:inherit;
+    font-weight:500;
+    cursor:pointer;
+  }
+  .name-card button:hover{ background:var(--moss); }
+
+  @media (max-width:520px){
+    h1{ font-size:27px; }
+    .page{ padding:28px 16px 100px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <header class="masthead">
+    <div>
+      <h1>Classnotes</h1>
+      <div class="sub">a shared shelf for the class</div>
+    </div>
+    <div class="whoami" id="whoami"></div>
+  </header>
+
+  <div class="status" id="status"></div>
+
+  <div class="toolbar">
+    <input type="search" class="search" id="searchInput" placeholder="Search notes…" aria-label="Search notes">
+    <button class="add-btn" id="openComposer">+ Add a note</button>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="composer" id="composer">
+    <div class="row">
+      <input type="text" id="noteTitle" placeholder="Title (e.g. Chapter 4 summary)">
+      <input type="text" id="noteSubject" placeholder="Subject (e.g. Physics)">
+    </div>
+    <textarea id="noteContent" placeholder="Write notes here, attach a PDF below, or both…"></textarea>
+    <div class="file-row">
+      <label class="file-picker">
+        📎 Attach PDF
+        <input type="file" id="notePdf" accept="application/pdf">
+      </label>
+      <span class="file-name" id="fileName"></span>
+      <button class="file-clear" id="clearFile" style="display:none;">remove</button>
+      <span class="file-hint">PDF only, up to 3.5MB per file.</span>
+    </div>
+    <div class="actions">
+      <button class="cancel" id="cancelComposer">Cancel</button>
+      <button class="add-btn" id="saveNote">Post note</button>
+    </div>
+  </div>
+
+  <div class="notes" id="notesList"></div>
+</div>
+
+<div class="name-gate" id="nameGate">
+  <div class="name-card">
+    <h2>Who's posting?</h2>
+    <p>Your name is shown on the notes you add. Everyone in the class can see them.</p>
+    <input type="text" id="nameInput" placeholder="Your name">
+    <button id="saveName">Continue</button>
+  </div>
+</div>
+
+<script>
+const MAX_PDF_BYTES = 3.5 * 1024 * 1024;
+
+let currentUser = null;
+let allNotes = [];
+let activeSubject = 'All';
+let searchTerm = '';
+let pendingFile = null;
+
+const el = (id) => document.getElementById(id);
+
+function escapeHtml(s){
+  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function timeAgo(ts){
+  const diff = Date.now() - ts;
+  const mins = Math.floor(diff/60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return mins + 'm ago';
+  const hrs = Math.floor(mins/60);
+  if (hrs < 24) return hrs + 'h ago';
+  const days = Math.floor(hrs/24);
+  if (days < 7) return days + 'd ago';
+  return new Date(ts).toLocaleDateString();
+}
+
+function fileSizeLabel(bytes){
+  if (bytes < 1024*1024) return Math.round(bytes/1024) + 'KB';
+  return (bytes/(1024*1024)).toFixed(1) + 'MB';
+}
+
+function setStatus(msg, isError){
+  const s = el('status');
+  s.textContent = msg || '';
+  s.classList.toggle('error', !!isError);
+}
+
+async function init(){
+  try {
+    const profile = await window.storage.get('profile', false);
+    if (profile && profile.value){
+      currentUser = JSON.parse(profile.value).name;
+    }
+  } catch(e){ /* no profile yet */ }
+
+  if (currentUser){
+    el('nameGate').style.display = 'none';
+    renderWhoAmI();
+  }
+
+  await loadNotes();
+  wireEvents();
+}
+
+function renderWhoAmI(){
+  el('whoami').innerHTML = `Posting as <strong>${escapeHtml(currentUser)}</strong> · <button id="changeNameBtn">not you?</button>`;
+  el('changeNameBtn').addEventListener('click', () => {
+    el('nameGate').style.display = 'flex';
+    el('nameInput').value = currentUser;
+    el('nameInput').focus();
+  });
+}
+
+async function loadNotes(){
+  setStatus('Loading notes…');
+  try {
+    const result = await window.storage.get('notes', true);
+    allNotes = (result && result.value) ? JSON.parse(result.value) : [];
+  } catch(e){
+    allNotes = [];
+  }
+  setStatus('');
+  renderTabs();
+  renderNotes();
+}
+
+async function saveIndex(){
+  await window.storage.set('notes', JSON.stringify(allNotes), true);
+}
+
+function renderTabs(){
+  const subjects = ['All', ...new Set(allNotes.map(n => n.subject).filter(Boolean))];
+  el('tabs').innerHTML = subjects.map(s =>
+    `<button class="tab ${s === activeSubject ? 'active' : ''}" data-subject="${escapeHtml(s)}">${escapeHtml(s)}</button>`
+  ).join('');
+  el('tabs').querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeSubject = btn.dataset.subject;
+      renderTabs();
+      renderNotes();
+    });
+  });
+}
+
+function renderNotes(){
+  let notes = allNotes.slice().sort((a,b) => b.timestamp - a.timestamp);
+
+  if (activeSubject !== 'All'){
+    notes = notes.filter(n => n.subject === activeSubject);
+  }
+  if (searchTerm){
+    const t = searchTerm.toLowerCase();
+    notes = notes.filter(n =>
+      (n.title || '').toLowerCase().includes(t) ||
+      (n.content || '').toLowerCase().includes(t) ||
+      (n.subject || '').toLowerCase().includes(t) ||
+      (n.author || '').toLowerCase().includes(t) ||
+      (n.pdfName || '').toLowerCase().includes(t)
+    );
+  }
+
+  if (notes.length === 0){
+    el('notesList').innerHTML = `<div class="empty"><div class="big">Nothing here yet.</div>Be the first to post a note for this subject.</div>`;
+    return;
+  }
+
+  el('notesList').innerHTML = notes.map(n => `
+    <div class="note ${n.author === currentUser ? 'mine' : ''}" data-id="${n.id}">
+      <div class="note-head">
+        <h3 class="note-title">${escapeHtml(n.title || 'Untitled')}</h3>
+        ${n.subject ? `<span class="note-subject">${escapeHtml(n.subject)}</span>` : ''}
+      </div>
+      <div class="note-meta">${escapeHtml(n.author || 'Anonymous')} · ${timeAgo(n.timestamp)}</div>
+      ${n.content ? `<div class="note-body clamped" id="body-${n.id}">${escapeHtml(n.content)}</div>` : ''}
+      ${n.content ? `<div class="note-foot" style="margin-top:2px;"><button class="expand-btn" data-expand="${n.id}">Read more</button><span></span></div>` : ''}
+      ${n.hasPdf ? `
+        <div class="pdf-chip">
+          <span class="ext">PDF</span>
+          <span>${escapeHtml(n.pdfName || 'attachment.pdf')}</span>
+          <button data-download="${n.id}" data-filename="${escapeHtml(n.pdfName || 'note.pdf')}">Download</button>
+        </div>` : ''}
+      <div class="note-foot">
+        <span></span>
+        ${n.author === currentUser ? `<button class="delete-btn" data-delete="${n.id}">Delete</button>` : '<span></span>'}
+      </div>
+    </div>
+  `).join('');
+
+  el('notesList').querySelectorAll('[data-expand]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.expand;
+      const body = el('body-' + id);
+      const expanded = body.classList.toggle('expanded');
+      body.classList.toggle('clamped', !expanded);
+      btn.textContent = expanded ? 'Show less' : 'Read more';
+    });
+  });
+
+  el('notesList').querySelectorAll('[data-download]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.download;
+      const filename = btn.dataset.filename;
+      btn.disabled = true;
+      const originalText = btn.textContent;
+      btn.textContent = 'Fetching…';
+      try {
+        const result = await window.storage.get('pdf:' + id, true);
+        if (result && result.value){
+          const a = document.createElement('a');
+          a.href = result.value;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        } else {
+          setStatus('That PDF could not be found — it may have been removed.', true);
+        }
+      } catch(e){
+        setStatus('Could not fetch the PDF — try again.', true);
+      }
+      btn.disabled = false;
+      btn.textContent = originalText;
+    });
+  });
+
+  el('notesList').querySelectorAll('[data-delete]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Delete this note for everyone?')) return;
+      const id = btn.dataset.delete;
+      const note = allNotes.find(n => n.id === id);
+      allNotes = allNotes.filter(n => n.id !== id);
+      setStatus('Deleting…');
+      try {
+        await saveIndex();
+        if (note && note.hasPdf){
+          try { await window.storage.delete('pdf:' + id, true); } catch(e){ /* best effort */ }
+        }
+        setStatus('');
+      } catch(e){
+        setStatus('Could not delete — try again.', true);
+      }
+      renderTabs();
+      renderNotes();
+    });
+  });
+}
+
+function resetComposerFields(){
+  el('noteTitle').value = '';
+  el('noteSubject').value = '';
+  el('noteContent').value = '';
+  el('notePdf').value = '';
+  pendingFile = null;
+  el('fileName').textContent = '';
+  el('clearFile').style.display = 'none';
+}
+
+function readFileAsDataURL(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('Could not read file'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function wireEvents(){
+  el('saveName').addEventListener('click', async () => {
+    const name = el('nameInput').value.trim();
+    if (!name) return;
+    currentUser = name;
+    try {
+      await window.storage.set('profile', JSON.stringify({ name }), false);
+    } catch(e){ /* non-fatal */ }
+    el('nameGate').style.display = 'none';
+    renderWhoAmI();
+    renderNotes();
+  });
+  el('nameInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') el('saveName').click();
+  });
+
+  el('openComposer').addEventListener('click', () => {
+    if (!currentUser){
+      el('nameGate').style.display = 'flex';
+      el('nameInput').focus();
+      return;
+    }
+    el('composer').classList.add('open');
+    el('noteTitle').focus();
+  });
+  el('cancelComposer').addEventListener('click', () => {
+    el('composer').classList.remove('open');
+    resetComposerFields();
+  });
+
+  el('notePdf').addEventListener('change', () => {
+    const file = el('notePdf').files[0];
+    if (!file) return;
+    if (file.type !== 'application/pdf'){
+      setStatus('Only PDF files are supported.', true);
+      el('notePdf').value = '';
+      return;
+    }
+    if (file.size > MAX_PDF_BYTES){
+      setStatus(`That PDF is ${fileSizeLabel(file.size)} — the limit is 3.5MB.`, true);
+      el('notePdf').value = '';
+      return;
+    }
+    setStatus('');
+    pendingFile = file;
+    el('fileName').textContent = `${file.name} (${fileSizeLabel(file.size)})`;
+    el('clearFile').style.display = 'inline';
+  });
+
+  el('clearFile').addEventListener('click', () => {
+    pendingFile = null;
+    el('notePdf').value = '';
+    el('fileName').textContent = '';
+    el('clearFile').style.display = 'none';
+  });
+
+  el('saveNote').addEventListener('click', async () => {
+    const title = el('noteTitle').value.trim();
+    const subject = el('noteSubject').value.trim() || 'General';
+    const content = el('noteContent').value.trim();
+
+    if (!content && !pendingFile){
+      setStatus('Write something or attach a PDF before posting.', true);
+      return;
+    }
+
+    const saveBtn = el('saveNote');
+    saveBtn.disabled = true;
+
+    const note = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+      title, subject, content,
+      author: currentUser,
+      timestamp: Date.now(),
+      hasPdf: !!pendingFile,
+      pdfName: pendingFile ? pendingFile.name : null
+    };
+
+    try {
+      if (pendingFile){
+        setStatus('Uploading PDF…');
+        const dataUrl = await readFileAsDataURL(pendingFile);
+        await window.storage.set('pdf:' + note.id, dataUrl, true);
+      }
+
+      setStatus('Posting…');
+      try {
+        const result = await window.storage.get('notes', true);
+        allNotes = (result && result.value) ? JSON.parse(result.value) : [];
+      } catch(e){ /* keep local copy */ }
+      allNotes.push(note);
+      await saveIndex();
+      setStatus('');
+    } catch(e){
+      setStatus('Could not post — try again.', true);
+      saveBtn.disabled = false;
+      return;
+    }
+
+    saveBtn.disabled = false;
+    el('composer').classList.remove('open');
+    resetComposerFields();
+    activeSubject = 'All';
+    renderTabs();
+    renderNotes();
+  });
+
+  el('searchInput').addEventListener('input', (e) => {
+    searchTerm = e.target.value;
+    renderNotes();
+  });
+}
+
+init();
+</script>
+</body>
+</html>
